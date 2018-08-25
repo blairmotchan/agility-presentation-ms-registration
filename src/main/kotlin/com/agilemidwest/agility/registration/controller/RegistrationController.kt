@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/registration")
 class RegistrationController {
     @RequestMapping(method = [RequestMethod.POST])
-    @ResponseStatus(HttpStatus.OK)
     fun register(@RequestBody registrationRequest: RegistrationRequest): RegistrationResponse {
         return RegistrationResponse(true, registrationRequest.sessionId, registrationRequest.attendeeId)
     }

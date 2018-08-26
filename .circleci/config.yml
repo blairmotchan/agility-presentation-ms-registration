@@ -44,53 +44,50 @@ jobs:
     - run: mvn clean package
   deploy:
     docker:
-        # specify the version you desire here
-        - image: circleci/openjdk:8-jdk
+    # specify the version you desire here
+    - image: circleci/openjdk:8-jdk
 
-        # Specify service dependencies here if necessary
-        # CircleCI maintains a library of pre-built images
-        # documented at https://circleci.com/docs/2.0/circleci-images/
-        # - image: circleci/postgres:9.4
+    # Specify service dependencies here if necessary
+    # CircleCI maintains a library of pre-built images
+    # documented at https://circleci.com/docs/2.0/circleci-images/
+    # - image: circleci/postgres:9.4
 
-        working_directory: ~/repo
+    working_directory: ~/repo
 
-        environment:
-          # Customize the JVM maximum heap limit
-          MAVEN_OPTS: -Xmx3200m
+    environment:
+      # Customize the JVM maximum heap limit
+      MAVEN_OPTS: -Xmx3200m
 
-        steps:
-        - add_ssh_keys:
-            fingerprints:
-            - "ab:7c:42:ae:be:ba:55:bc:1d:50:f3:5b:57:5e:23:25"
-        - checkout
+    steps:
+    - add_ssh_keys:
+        fingerprints:
+        - "ab:7c:42:ae:be:ba:55:bc:1d:50:f3:5b:57:5e:23:25"
+    - checkout
 
-        # Download and cache dependencies
-        - restore_cache:
-            keys:
-            - v1-dependencies-{{ checksum "pom.xml" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+    # Download and cache dependencies
+    - restore_cache:
+        keys:
+        - v1-dependencies-{{ checksum "pom.xml" }}
+        # fallback to using the latest cache if no exact match is found
+        - v1-dependencies-
 
-        - run: mvn dependency:go-offline
+    - run: mvn dependency:go-offline
 
-        - save_cache:
-            paths:
-            - ~/.m2
-            key: v1-dependencies-{{ checksum "pom.xml" }}
+    - save_cache:
+        paths:
+        - ~/.m2
+        key: v1-dependencies-{{ checksum "pom.xml" }}
 
-        # run tests!
-        - run: mvn clean package -DskipTests
-        - run: ./deployment/deploy.sh
+    # run tests!
+    - run: mvn clean package -DskipTests
+    - run: ./deployment/deploy.sh
 workflows:
   version: 2
   approve-deployment:
     jobs:
       - build
-      - hold:
+      - deploy:
           type: approval
           requires:
             - build
-      - deploy:
-          requires:
-            - hold
 

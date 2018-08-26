@@ -86,8 +86,11 @@ workflows:
   approve-deployment:
     jobs:
       - build
-      - deploy:
+      - approve-deployment:
           type: approval
           requires:
             - build
+      - deploy:
+          requires:
+            - approve-deployment
 

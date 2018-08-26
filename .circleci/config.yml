@@ -42,4 +42,12 @@ jobs:
 
     # run tests!
     - run: mvn clean package
+  deploy:
     - run: ./deployment/deploy.sh
+workflows:
+  version: 2
+  approve-deployment:
+    jobs:
+      - hold:
+        type: approval
+

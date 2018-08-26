@@ -42,7 +42,8 @@ jobs:
 
     # run tests!
     - run: mvn clean package
-  deploy:
+    - run: ./deployment/deploy.sh
+  deploy-to-prod:
     docker:
     # specify the version you desire here
     - image: circleci/openjdk:8-jdk
@@ -86,11 +87,11 @@ workflows:
   approve-deployment:
     jobs:
       - build
-      - approve-deployment:
+      - approve-prod-deployment:
           type: approval
           requires:
             - build
-      - deploy:
+      - deploy-to-prod:
           requires:
-            - approve-deployment
+            - approve-prod-deployment
 
